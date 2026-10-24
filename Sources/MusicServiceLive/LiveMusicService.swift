@@ -13,6 +13,10 @@ public final class LiveMusicService: MusicService {
         authorization = LiveAuthorizationService()
         catalog = LiveCatalogService(store: store)
         library = LiveLibraryService(store: store)
+        #if os(watchOS)
+        player = UnavailablePlayerService()
+        #else
         player = LivePlayerService(store: store)
+        #endif
     }
 }

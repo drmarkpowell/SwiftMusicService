@@ -58,6 +58,52 @@ struct MockCatalogServiceTests {
         #expect(tracks == [known])
     }
 
+    @Test func unknownPlaylistsAreNotFoundByDefault() async throws {
+        #expect(try await service.catalog.playlist(id: "pl.u-unknown") == nil)
+        #expect(try await service.catalog.searchPlaylists(matching: "Nothing Like This", limit: 1).isEmpty)
+    }
+
+    @Test func missingPlaylistsCanBeGeneratedByID() async throws {
+        let service = MockMusicService(behavior: MockBehavior(latency: .zero, generatesMissingPlaylists: true))
+
+        let playlist = try #require(try await service.catalog.playlist(id: "pl.u-8e5Ek2Vwr9"))
+        let tracks = try await service.catalog.tracks(in: playlist)
+
+        #expect((8...12).contains(tracks.count))
+        #expect(try await service.catalog.playlist(id: "pl.u-8e5Ek2Vwr9") == playlist)
+        #expect(try await service.catalog.tracks(in: playlist) == tracks)
+    }
+
+    @Test func missingPlaylistsCanBeGeneratedByName() async throws {
+        let service = MockMusicService(behavior: MockBehavior(latency: .zero, generatesMissingPlaylists: true))
+
+        let resolved = try await service.catalog.resolvePlaylist(name: "Feeling Angry", urlString: nil)
+
+        #expect(resolved?.name == "Feeling Angry")
+    }
+
+    @Test func generatedSongsAreTheSameInEveryService() async throws {
+        let first = MockMusicService(behavior: MockBehavior(latency: .zero, generatesMissingPlaylists: true))
+        let second = MockMusicService(behavior: MockBehavior(latency: .zero, generatesMissingPlaylists: true))
+
+        let firstPlaylist = try #require(try await first.catalog.playlist(id: "pl.u-abc"))
+        let secondPlaylist = try #require(try await second.catalog.playlist(id: "pl.u-abc"))
+
+        #expect(try await first.catalog.tracks(in: firstPlaylist) == second.catalog.tracks(in: secondPlaylist))
+    }
+
+    @Test func generatedPlaylistsCanBePlayed() async throws {
+        let behavior = MockBehavior(latency: .zero, autoAdvance: false, generatesMissingPlaylists: true)
+        let service = MockMusicService(behavior: behavior)
+        let url = "https://music.apple.com/us/playlist/x/pl.u-xyz"
+        let playlist = try #require(try await service.catalog.resolvePlaylist(name: "Chill", urlString: url))
+
+        try await service.player.play(playlist: playlist)
+
+        #expect(service.player.isPlaying)
+        #expect(!service.player.entries.isEmpty)
+    }
+
     @Test func searchFailureCanBeInjected() async {
         service.behavior.failures = [.catalogSearch]
         await #expect(throws: MusicServiceError.injected("catalogSearch")) {

@@ -40,6 +40,8 @@ extension MusicPlaylist {
     }
 }
 
+#if !os(watchOS)
+
 extension QueueEntry {
     init(_ entry: ApplicationMusicPlayer.Queue.Entry) {
         var track: MusicTrack?
@@ -70,6 +72,8 @@ extension PlaybackStatus {
         }
     }
 }
+
+#endif
 
 extension MusicAuthorizationStatus {
     init(_ status: MusicAuthorization.Status) {

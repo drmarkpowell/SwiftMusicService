@@ -16,3 +16,5 @@ jobs:
         run: xcodebuild build -scheme SwiftMusicService-Package -destination 'generic/platform=iOS Simulator'
       - name: Build for tvOS Simulator
         run: xcodebuild build -scheme SwiftMusicService-Package -destination 'generic/platform=tvOS Simulator'
+      - name: Build for watchOS Simulator
+        run: xcodebuild build -scheme SwiftMusicService-Package -destination 'generic/platform=watchOS Simulator'

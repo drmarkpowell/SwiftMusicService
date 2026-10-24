@@ -8,6 +8,7 @@ let package = Package(
         .iOS(.v26),
         .macOS(.v26),
         .tvOS(.v26),
+        .watchOS(.v26),
     ],
     products: [
         // Protocols, value types, SwiftUI helpers and the mock. Does not import MusicKit.

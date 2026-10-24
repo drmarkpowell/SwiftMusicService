@@ -6,6 +6,8 @@ import MusicService
 /// because the player can only queue MusicKit items, not our copies of them.
 @MainActor
 final class MusicKitStore {
+    private static let catalogBatchSize = 25
+
     private var songs: [MusicItemIdentifier: Song] = [:]
     private var playlists: [MusicItemIdentifier: Playlist] = [:]
 
@@ -20,14 +22,26 @@ final class MusicKitStore {
     /// The MusicKit songs for these tracks, fetching any that were never seen.
     func songs(for tracks: [MusicTrack]) async throws -> [Song] {
         let missing = tracks.map(\.id).filter { songs[$0] == nil }
-        if !missing.isEmpty {
+        _ = try await fetchSongs(ids: missing)
+        return tracks.compactMap { songs[$0.id] }
+    }
+
+    /// Fetches songs from the catalog and remembers them. The catalog accepts at most 25 ids
+    /// per request, so larger lists are fetched in batches.
+    func fetchSongs(ids: [MusicItemIdentifier]) async throws -> [Song] {
+        var fetched: [Song] = []
+        for start in stride(from: 0, to: ids.count, by: Self.catalogBatchSize) {
+            let batch = ids[start..<min(start + Self.catalogBatchSize, ids.count)]
             let request = MusicCatalogResourceRequest<Song>(
                 matching: \.id,
-                memberOf: missing.map { MusicItemID($0.rawValue) }
+                memberOf: batch.map { MusicItemID($0.rawValue) }
             )
-            for song in try await request.response().items { remember(song) }
+            for song in try await request.response().items {
+                remember(song)
+                fetched.append(song)
+            }
         }
-        return tracks.compactMap { songs[$0.id] }
+        return fetched
     }
 
     /// The MusicKit playlist for this value, fetching it if it was never seen.

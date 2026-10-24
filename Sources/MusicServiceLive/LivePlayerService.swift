@@ -1,3 +1,4 @@
+#if !os(watchOS)
 import Combine
 import Foundation
 @preconcurrency import MusicKit
@@ -151,3 +152,4 @@ final class LivePlayerService: MusicPlayerService {
         playbackTime = player.playbackTime
     }
 }
+#endif

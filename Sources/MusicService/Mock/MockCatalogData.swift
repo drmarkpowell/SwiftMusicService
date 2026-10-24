@@ -10,7 +10,8 @@ public struct MockCatalogData: Sendable {
         self.tracksByPlaylist = tracksByPlaylist
     }
 
-    var allTracks: [MusicTrack] {
+    /// Every song in the catalog, across all playlists.
+    public var allTracks: [MusicTrack] {
         tracksByPlaylist.values.flatMap { $0 }
     }
 
@@ -20,18 +21,9 @@ public struct MockCatalogData: Sendable {
             "Feeling Good", "Chill Vibes", "Workout Energy", "Focus Time", "Rainy Day",
             "Road Trip", "Dinner Party", "Sunday Morning", "Late Night Drive", "Throwback Party"
         ]
-        let adjectives = [
-            "Golden", "Quiet", "Electric", "Velvet", "Paper", "Neon",
-            "Hollow", "Sunlit", "Midnight", "Crystal", "Restless", "Gentle"
-        ]
-        let nouns = [
-            "Skyline", "Harbor", "Echo", "Garden", "Circuit", "Horizon",
-            "Lantern", "River", "Static", "Orchard", "Compass", "Tide"
-        ]
-        let artists = [
-            "The Fictional Few", "Maple & Moss", "Static Bloom", "Juno Park",
-            "Low Tide Radio", "Paper Satellites", "Nina Vale", "The Placeholders"
-        ]
+        let adjectives = MockTrackGenerator.adjectives
+        let nouns = MockTrackGenerator.nouns
+        let artists = MockTrackGenerator.artists
 
         var playlists: [MusicPlaylist] = []
         var tracksByPlaylist: [MusicItemIdentifier: [MusicTrack]] = [:]

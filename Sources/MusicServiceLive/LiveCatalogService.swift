@@ -42,16 +42,8 @@ final class LiveCatalogService: MusicCatalogService {
 
     func tracks(ids: [MusicItemIdentifier]) async throws -> [MusicTrack] {
         var result: [MusicTrack] = []
-        // The catalog accepts a limited number of ids per request.
-        for chunk in stride(from: 0, to: ids.count, by: 100).map({ Array(ids[$0..<min($0 + 100, ids.count)]) }) {
-            let request = MusicCatalogResourceRequest<Song>(
-                matching: \.id,
-                memberOf: chunk.map { MusicItemID($0.rawValue) }
-            )
-            for song in try await request.response().items {
-                store.remember(song)
-                result.append(MusicTrack(song))
-            }
+        for song in try await store.fetchSongs(ids: ids) {
+            result.append(MusicTrack(song))
         }
         return result
     }

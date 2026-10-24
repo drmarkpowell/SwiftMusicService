@@ -1,13 +1,18 @@
 import SwiftUI
 
 /// Draws artwork from its URL, or a gradient with a note glyph when there is none.
+///
+/// Artwork is hidden from VoiceOver by default. Pass `isDecorative: false` to add your own
+/// accessibility label and traits.
 public struct MusicArtworkView: View {
     private let artwork: MusicArtwork?
     private let size: CGFloat
+    private let isDecorative: Bool
 
-    public init(_ artwork: MusicArtwork?, size: CGFloat) {
+    public init(_ artwork: MusicArtwork?, size: CGFloat, isDecorative: Bool = true) {
         self.artwork = artwork
         self.size = size
+        self.isDecorative = isDecorative
     }
 
     public var body: some View {
@@ -24,7 +29,7 @@ public struct MusicArtworkView: View {
         }
         .frame(width: size, height: size)
         .clipShape(.rect(cornerRadius: size * 0.08))
-        .accessibilityHidden(true)
+        .accessibilityHidden(isDecorative)
     }
 }
 

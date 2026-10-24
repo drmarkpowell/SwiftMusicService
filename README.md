@@ -4,7 +4,7 @@ MusicKit does not work in the iOS Simulator. This package puts a small protocol 
 
 ## Installation
 
-Requires iOS 26, macOS 26 or tvOS 26, and Swift 6.2.
+Requires iOS 26, macOS 26, tvOS 26 or watchOS 26, and Swift 6.2.
 
 ```swift
 dependencies: [
@@ -56,6 +56,7 @@ Then `import MusicService` (and `import MusicServiceLive` where you create the s
 - `initialAuthorizationStatus`, `authorizationRequestResult`, `enforcesAuthorization`
 - `autoAdvance`, `playbackSpeed`: the playback clock
 - `seed`: shuffle order
+- `generatesMissingPlaylists`: make up a playlist, with stable placeholder songs, for any id or name the catalog doesn't have. Turn it on when your app's playlists come from its own data.
 
 In tests use `MockBehavior.instant()` and call `mockPlayer.advance(by:)` to move time.
 
@@ -66,6 +67,7 @@ In tests use `MockBehavior.instant()` and call `mockPlayer.advance(by:)` to move
 - Value types (`MusicTrack`, `MusicPlaylist`, `QueueEntry`) replace `Song`, `Playlist` and `Queue.Entry`. Artwork is a URL, or a gradient for the mock.
 - Mock catalog search treats an empty term as "all playlists".
 - On macOS the live library service throws `.unavailable`, because MusicKit has no `MusicLibrary` there.
+- On watchOS the live player throws `.unavailable`, because MusicKit has no player there. Catalog, library and authorization work.
 - The live implementation compiles for iOS, macOS and tvOS but has not been run on a device.
 
 ## Demo and tests

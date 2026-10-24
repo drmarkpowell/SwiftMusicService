@@ -30,6 +30,10 @@ public final class MockBehavior {
     public var playbackSpeed: Double
     /// Seed for shuffling, so a given queue shuffles the same way every run.
     public var seed: UInt64
+    /// When on, looking up an unknown playlist id or searching for an unknown name makes up a playlist
+    /// with stable placeholder songs instead of finding nothing. Use it when the app's playlists come
+    /// from its own data and cannot be listed in advance.
+    public var generatesMissingPlaylists: Bool
 
     public init(
         latency: Duration = .milliseconds(200),
@@ -39,7 +43,8 @@ public final class MockBehavior {
         authorizationRequestResult: MusicAuthorizationStatus = .authorized,
         autoAdvance: Bool = true,
         playbackSpeed: Double = 1,
-        seed: UInt64 = 42
+        seed: UInt64 = 42,
+        generatesMissingPlaylists: Bool = false
     ) {
         self.latency = latency
         self.failures = failures
@@ -49,6 +54,7 @@ public final class MockBehavior {
         self.autoAdvance = autoAdvance
         self.playbackSpeed = playbackSpeed
         self.seed = seed
+        self.generatesMissingPlaylists = generatesMissingPlaylists
     }
 
     /// No latency and no timer: every call completes immediately and time only moves when told to.
