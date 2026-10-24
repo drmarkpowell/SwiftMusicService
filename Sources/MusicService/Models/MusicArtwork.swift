@@ -6,10 +6,13 @@ public struct MusicArtwork: Hashable, Sendable {
     public var url: URL?
     /// Hue (0...1) used for the placeholder gradient when there is no URL.
     public var hue: Double
+    /// The framework's own artwork object, for views that can draw it natively. See ``MusicArtworkNativeValue``.
+    public var native: MusicArtworkNativeValue?
 
-    public init(url: URL? = nil, hue: Double = 0.6) {
+    public init(url: URL? = nil, hue: Double = 0.6, native: MusicArtworkNativeValue? = nil) {
         self.url = url
         self.hue = hue
+        self.native = native
     }
 
     public static func placeholder(hue: Double) -> MusicArtwork {

@@ -7,7 +7,11 @@ import MusicService
 extension MusicArtwork {
     init?(_ artwork: Artwork?) {
         guard let artwork else { return nil }
-        self.init(url: artwork.url(width: 600, height: 600), hue: 0.6)
+        self.init(
+            url: artwork.url(width: 600, height: 600),
+            hue: 0.6,
+            native: MusicArtworkNativeValue(artwork)
+        )
     }
 }
 

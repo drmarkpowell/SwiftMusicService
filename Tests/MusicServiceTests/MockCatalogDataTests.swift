@@ -31,3 +31,25 @@ struct MockCatalogDataTests {
         #expect(data.allTracks.allSatisfy { $0.duration >= 120 && $0.duration < 270 })
     }
 }
+
+struct MusicArtworkTests {
+    @Test func aNativeValueRoundTripsByType() {
+        let native = MusicArtworkNativeValue("original")
+
+        #expect(native.unwrap(as: String.self) == "original")
+        #expect(native.unwrap(as: Int.self) == nil)
+    }
+
+    @Test func artworkWithTheSameNativeValueIsEqual() {
+        let first = MusicArtwork(hue: 0.2, native: MusicArtworkNativeValue("a"))
+        let second = MusicArtwork(hue: 0.2, native: MusicArtworkNativeValue("a"))
+        let other = MusicArtwork(hue: 0.2, native: MusicArtworkNativeValue("b"))
+
+        #expect(first == second)
+        #expect(first != other)
+    }
+
+    @Test func mockArtworkHasNoNativeValue() {
+        #expect(MockCatalogData.standard.allTracks.allSatisfy { $0.artwork?.native == nil })
+    }
+}
